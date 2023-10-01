@@ -21,6 +21,10 @@ mongo_client = MongoClient(app.config['MONGO_URI'])
 db = mongo_client[app.config['DB_NAME']]
 collection = db[app.config['COLLECTION_NAME']]
 
+@app.route('/', methods=['GET'])
+def hello_world():
+    return "Hello, World"
+
 
 @app.route('/upload', methods=['POST'])
 def upload_data():
