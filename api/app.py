@@ -9,12 +9,14 @@ from flask import Flask,request, jsonify
 app = Flask(__name__)
 
 
+
+
 # Initialize and configure CORS
 cors = CORS(app, resources={r"*": {"origins": "http://localhost:5173"}})
 
-mongo_client = MongoClient(app.config['MONGO_URI'])
-db = mongo_client[app.config['DB_NAME']]
-collection = db[app.config['COLLECTION_NAME']]
+mongo_client = MongoClient([MONGO_URI])
+db = mongo_client[DB_NAME]
+collection = db[COLLECTION_NAME]
 
 @app.route('/', methods=['GET'])
 def hello_world():
