@@ -10,5 +10,13 @@
             "src":"/(.*)",
             "dest": "app.py"
         }
-    ]
+    ],
+    "build" :{
+        "functions":"vercel/functions"
+    },
+    "functions": {
+        "/fetch-premium":{
+            "source": "app.py"
+        }
+    }
 }
