@@ -5,6 +5,7 @@ import json
 import pandas as pd
 from bson import json_util
 from flask import Flask,request, jsonify
+from werkzeug.urls import url_quote
 
 app = Flask(__name__)
 
@@ -12,7 +13,9 @@ app = Flask(__name__)
 
 
 # Initialize and configure CORS
-cors = CORS(app, resources={r"*": {"origins": "http://localhost:5173"}})
+cors = CORS(app, resources={
+    r"*": {"origins": ["http://localhost:5173", "https://oneassureassignment.netlify.app/"]}
+})
 
 mongo_client = MongoClient("mongodb+srv://chaithanya:chaithanya%401M@cluster0.v7ivcmn.mongodb.net/?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE")
 db = mongo_client['oneassure']
