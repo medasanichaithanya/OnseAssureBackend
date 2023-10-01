@@ -1,0 +1,57 @@
+# Byte-compiled / optimized Python files
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Flask specific
+instance/
+*.pyc
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.*
+
+# Database
+*.db
+
+# Compiled Python files
+*.pyo
+*.pyd
+
+# PyCharm files
+.idea/
+
+# Visual Studio Code files
+.vscode/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Webpack build files
+dist/
+
+# Node modules
+node_modules/
+
+# Compiled binary files
+*.dll
+*.so
+*.dylib
+
+# System or backup files
+.DS_Store
+Thumbs.db
+
+# Python testing and coverage directories
+htmlcov/
+.coverage
+
+# Local development settings
+flaskapp/config.py
