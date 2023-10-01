@@ -11,12 +11,8 @@
             "dest": "app.py"
         }
     ],
-    "build" :{
-        "functions":"vercel/functions"
-    },
-    "functions": {
-        "/fetch-premium":{
+    
+    "functions":{
             "source": "app.py"
-        }
     }
 }
