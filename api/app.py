@@ -8,11 +8,6 @@ from flask import Flask,request, jsonify
 
 app = Flask(__name__)
 
-# Configure the app with settings from config.py
-app.config['MONGO_URI'] = MONGO_URI
-app.config['DB_NAME'] = DB_NAME
-app.config['COLLECTION_NAME'] = COLLECTION_NAME
-
 
 # Initialize and configure CORS
 cors = CORS(app, resources={r"*": {"origins": "http://localhost:5173"}})
