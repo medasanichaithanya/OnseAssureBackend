@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from api.config import MONGO_URI, DB_NAME, COLLECTION_NAME  # Import MONGO_URI from config.py
+# from api.config import MONGO_URI, DB_NAME, COLLECTION_NAME  # Import MONGO_URI from config.py
 from flask_cors import CORS
 import json
 import pandas as pd
@@ -14,9 +14,9 @@ app = Flask(__name__)
 # Initialize and configure CORS
 cors = CORS(app, resources={r"*": {"origins": "http://localhost:5173"}})
 
-mongo_client = MongoClient([MONGO_URI])
-db = mongo_client[DB_NAME]
-collection = db[COLLECTION_NAME]
+mongo_client = MongoClient("mongodb+srv://chaithanya:chaithanya%401M@cluster0.v7ivcmn.mongodb.net/?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE")
+db = mongo_client['oneassure']
+collection = db['insurancedata']
 
 @app.route('/', methods=['GET'])
 def hello_world():
