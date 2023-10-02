@@ -9,9 +9,6 @@ from werkzeug.urls import url_quote
 
 app = Flask(__name__)
 
-
-
-
 # Initialize and configure CORS
 cors = CORS(app, resources={
     r"*": {"origins": ["http://localhost:5173", "https://oneassureassignment.netlify.app"]}
@@ -52,7 +49,6 @@ def upload_data():
 @app.route('/check-db-connection', methods=['GET'])
 def check_db_connection():
     try:
-        
         # Check if the MongoDB client is connected
         is_connected = False
         if mongo_client.server_info():
@@ -115,14 +111,10 @@ def fetch_premium():
             total_premium.append(discount_price) 
             floaterDiscount.append(50)
 
-
-
         # Close the database connection
         mongo_client.close()
-
         return jsonify({'baseRates':baseRates,'floaterDiscount': floaterDiscount,'discountRate':discountRate,'total':sum(total_premium),'status':'SUCCESS'}), 200
        
-
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
