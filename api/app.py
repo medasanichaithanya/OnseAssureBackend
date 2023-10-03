@@ -58,63 +58,81 @@ def check_db_connection():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
 @app.route('/fetch-premium', methods=['GET'])
 def fetch_premium():
     try:
-        adult_age = request.args.get('adult_ages', '').split(',')
-        convert_int = list(map(int, adult_age))
-        adult_ages = sorted(convert_int,reverse=True)
-        child_age = request.args.get('child_ages','').split(',')
-        convert_ints = list(map(int, child_age))
-        child_ages = sorted(convert_ints,reverse=True)
+        # Parse and sort adult ages
+        adult_ages = sorted(map(int, request.args.get('adult_ages', '').split(',')), reverse=True)
+        
+        # Parse and sort child ages
+        child_ages = sorted(map(int, request.args.get('child_ages', '').split(',')), reverse=True)
+        
         tier = request.args.get('tier')
         combination = request.args.get('premium_comb')
         cover = request.args.get('cover')
+        
         baseRates = []
         floaterDiscount = []
-        finalData = []
         discountRate = []
         total_premium = []
-        count = 0
-        for ages in adult_ages:
-            count +=1
+        finalData = []
+
+        # Process adult ages
+        for age in adult_ages:
             adultdata = {}
-            filtered_data = collection.find({"tier": tier, "member_csv": combination})
-            filtered_records = [record for record in filtered_data if 'age_range' in record and '-' in record['age_range'] and ages in range(int(record['age_range'].split('-')[0]), int(record['age_range'].split('-')[1]) + 1)]
-            adultsdata = json.loads(json_util.dumps(filtered_records))
-            adultdata['base_rate'] = adultsdata[0][cover]
-            baseRates.append(adultsdata[0][cover])
-            if count > 1:
-                adultdata['floater_discount'] = 50
-                floaterDiscount.append(50)
-                discount_price = (adultsdata[0][cover]*50)/100
+            # Find matching records in the database
+            filtered_records = collection.find({
+                "tier": tier,
+                "member_csv": combination,
+                "age_range": {"$regex": r"\b{}\b".format(age)}
+            })
+            
+            if filtered_records.count() > 0:
+                record = filtered_records[0]
+                base_rate = record.get(cover, 0)
+                adultdata['base_rate'] = base_rate
+                
+                # Calculate floater discount
+                floater_discount = 50 if baseRates else 0
+                adultdata['floater_discount'] = floater_discount
+                
+                # Calculate discount rate
+                discount_price = (base_rate * floater_discount) / 100
                 adultdata['discount_rate'] = discount_price
+                
+                baseRates.append(base_rate)
+                floaterDiscount.append(floater_discount)
                 discountRate.append(discount_price)
                 total_premium.append(discount_price)
+                
+                finalData.append(adultdata)
 
-            else:
-                adultdata['floater_discount'] = 0
-                floaterDiscount.append(0)
-                discount_price = adultsdata[0][cover]
-                adultdata['discount_rate'] = discount_price
+        # Process child ages
+        for age in child_ages:
+            record = collection.find_one({
+                "tier": tier,
+                "member_csv": combination,
+                "age_range": {"$regex": r"\b{}\b".format(age)}
+            })
+
+            if record:
+                baseRates.append(record.get(cover, 0))
+                discount_price = record.get(cover, 0)
                 discountRate.append(discount_price)
-                total_premium.append(discount_price) 
-
-            finalData.append(adultdata)
-
-        for i in child_ages:
-            filtered_data = collection.find_one({"tier": tier, "member_csv": combination})
-            baseRates.append(filtered_data[cover])
-            discount_price = filtered_data[cover]
-            discountRate.append(discount_price)
-            total_premium.append(discount_price) 
-            floaterDiscount.append(50)
+                total_premium.append(discount_price)
+                floaterDiscount.append(50)
 
         # Close the database connection
         mongo_client.close()
-        return jsonify({'baseRates':baseRates,'floaterDiscount': floaterDiscount,'discountRate':discountRate,'total':sum(total_premium),'status':'SUCCESS'}), 200
-       
+
+        return jsonify({
+            'baseRates': baseRates,
+            'floaterDiscount': floaterDiscount,
+            'discountRate': discountRate,
+            'total': sum(total_premium),
+            'status': 'SUCCESS'
+        }), 200
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
