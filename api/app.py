@@ -102,7 +102,7 @@ def fetch_premium():
             finalData.append(adultdata)
 
         for i in child_ages:
-            filtered_data = collection.find_one({"tier": tier, "member_csv": combination})
+            filtered_data = collection.find_one({"tier": tier, "member_csv": "1a","age_range":i})
             baseRates.append(filtered_data[cover])
             discount_price = (filtered_data[cover]*50)/100
             discountRate.append(discount_price)
@@ -119,7 +119,7 @@ def fetch_premium():
             'status': 'SUCCESS'
         }), 200
     
-    
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
